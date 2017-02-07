@@ -68,6 +68,7 @@ def main(filename, delim, sort, by, desc):
     '''
     seqs = SeqIO.parse(filename, format  = 'fasta')
     sep = parse_sep(delim)
+    print_header(sep)
     for s in seqs:
         calc_summary(s, sep)
 

@@ -6,6 +6,7 @@ from Bio import SeqUtils
 import click
 import operator
 import sys
+import utils
 
 bases = ['A', 'T', 'C', 'G', 'N', '-']
 
@@ -33,6 +34,14 @@ class SeqSummary:
         for b in self.bases:
             self.__dict__[b] = self.s.seq.count(b)
         self.__dict__['dash'] = self.s.seq.count('-')
+    def generate_chunks(self, n_chunks):
+        self.chunks = {}
+        self.chunks['counts'] = utils.split_seq(self.s, n_chunks, self.length)
+    def chunk_percent(self, feature):
+        self.chunks[feature] = utils.chunk_percent(self.chunks['counts'], feature)
+    def print_blocks(self, feature):
+        blocks = utils.percent_to_blocks(self.chunks[feature], thresholds = [0.5, 0.9, 0.95])
+        print(self.id + ' ' + blocks)
 
 class SummaryGroup:
     def __init__(self, sort, sep, by = 'geecee', desc = False):
@@ -61,6 +70,14 @@ class SummaryGroup:
         mean_N = sum([s.N for s in self.sequences])/float(n_seq)
         mean_dash = sum([s.dash for s in self.sequences])/float(n_seq)
         print('N={} | mean length = {} | mean GC = {:.3}\nmean A = {:.3} | mean T = {:.3} | mean C = {:.3} | mean G = {:.3} | mean N = {:.3} | mean - = {:.3}'.format(n_seq, mean_len, mean_geecee, mean_A, mean_T, mean_C, mean_G, mean_N, mean_dash), file = sys.stderr)
+    def chunk_stats(self, n_chunks = 10, feature = 'geecee'):
+        for s in self.sequences:
+            s.generate_chunks(n_chunks)
+            s.chunk_percent(feature)
+            print(s.chunks[feature])
+    def get_blocks(self):
+        for s in self.sequences:
+            s.print_blocks(feature = 'geecee')
 
 def print_header(sep = '|'):
     header = sep.join(['ID','LENGTH', 'GEECEE', 'A', 'T', 'C', 'G', 'N', '-' ])
@@ -96,6 +113,8 @@ def main(filename, delim, sort, by, desc):
         for s in group.sequences:
             print(s)
     group.summarise()
+    group.chunk_stats()
+    group.get_blocks()
 
 if __name__ == '__main__':
     main()

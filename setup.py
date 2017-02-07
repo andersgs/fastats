@@ -27,7 +27,8 @@ setup(name='fastats',
       packages=['fastats'],
       install_requires=[
           'click',
-          'biopython'
+          'biopython',
+          'numpy'
       ],
       test_suite='nose.collector',
       tests_require=[],

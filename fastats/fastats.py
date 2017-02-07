@@ -114,7 +114,7 @@ def main(filename, delim, sort, by, desc):
             print(s)
     group.summarise()
     group.chunk_stats()
-    group.get_blocks()
+    group.get_blocks(by)
 
 if __name__ == '__main__':
     main()

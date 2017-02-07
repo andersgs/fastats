@@ -4,25 +4,26 @@
 from Bio import SeqIO
 from Bio import SeqUtils
 import click
+import operator
+import sys
 
 bases = ['A', 'T', 'C', 'G', 'N', '-']
 
 class SeqSummary:
-    bases = ['A', 'T', 'C', 'G', 'N', '-']
+    bases = ['A', 'T', 'C', 'G', 'N']
     def __init__(self, seqrec, sep = '|'):
-        self.__dict__ = {}
         self.sep = sep
         self.s = seqrec.upper() # makes sure comparison is always in upper case
     def __str__(self):
         out = self.sep.join(map(str,[self.id, \
             self.length, \
             '{:.3}'.format(self.geecee), \
-            self.counts['A'],
-            self.counts['T'],
-            self.counts['C'],
-            self.counts['G'],
-            self.counts['N'],
-            self.counts['-']]))
+            self.A,
+            self.T,
+            self.C,
+            self.G,
+            self.N,
+            self.dash]))
         return out
     def summarise(self):
         self.__dict__['id'] = self.s.id
@@ -30,23 +31,40 @@ class SeqSummary:
         self.__dict__['geecee'] = SeqUtils.GC(self.s.seq)
         self.__dict__['counts'] = {}
         for b in self.bases:
-            self.__dict__['counts'][b] = self.s.seq.count(b)
+            self.__dict__[b] = self.s.seq.count(b)
+        self.__dict__['dash'] = self.s.seq.count('-')
 
 class SummaryGroup:
-    def __init__(self, by, desc = False):
+    def __init__(self, sort, sep, by = 'geecee', desc = False):
+        self.sort = sort
         self.by = by
         self.desc = desc
-        self.__dict__ = {}
-
+        self.sep = sep
+        self.sequences = []
+    def add(self, seqrec):
+        tmp = SeqSummary(seqrec, self.sep)
+        tmp.summarise()
+        print('Parsed {}'.format(tmp.id), file = sys.stderr)
+        if not self.sort:
+            print(tmp)
+        self.sequences.append(tmp)
+    def arrange(self):
+        self.sequences = sorted(self.sequences, key = operator.attrgetter(self.by), reverse = self.desc)
+    def summarise(self):
+        n_seq = len(self.sequences)
+        mean_len = sum([s.length for s in self.sequences])/float(n_seq)
+        mean_geecee = sum([s.geecee for s in self.sequences])/float(n_seq)
+        mean_A = sum([s.A for s in self.sequences])/float(n_seq)
+        mean_T = sum([s.T for s in self.sequences])/float(n_seq)
+        mean_C = sum([s.C for s in self.sequences])/float(n_seq)
+        mean_G = sum([s.G for s in self.sequences])/float(n_seq)
+        mean_N = sum([s.N for s in self.sequences])/float(n_seq)
+        mean_dash = sum([s.dash for s in self.sequences])/float(n_seq)
+        print('N={} | mean length = {} | mean GC = {:.3}\nmean A = {:.3} | mean T = {:.3} | mean C = {:.3} | mean G = {:.3} | mean N = {:.3} | mean - = {:.3}'.format(n_seq, mean_len, mean_geecee, mean_A, mean_T, mean_C, mean_G, mean_N, mean_dash), file = sys.stderr)
 
 def print_header(sep = '|'):
     header = sep.join(['ID','LENGTH', 'GEECEE', 'A', 'T', 'C', 'G', 'N', '-' ])
     print(header)
-
-def calc_summary(seqrec, sep):
-    seq = SeqSummary(seqrec, sep)
-    seq.summarise()
-    print(seq)
 
 def parse_sep(sep):
     '''
@@ -59,7 +77,7 @@ def parse_sep(sep):
 @click.command()
 @click.option('-d', '--delim', default='|', show_default = True, metavar = '<char>', help = 'Set separator character.')
 @click.option('-s', '--sort', is_flag = True)
-@click.option('--by', default = 'geecee', show_default = True, type = click.Choice(['geecee', 'length', 'N', '-', 'A', 'T', 'C', 'G']), help = 'Sort by column.')
+@click.option('--by', default = 'geecee', show_default = True, type = click.Choice(['geecee', 'length', 'N', 'dash', 'A', 'T', 'C', 'G']), help = 'Sort by column.')
 @click.option('--desc', is_flag = True, help = 'Sort by descending order.')
 @click.argument('filename')
 def main(filename, delim, sort, by, desc):
@@ -69,8 +87,14 @@ def main(filename, delim, sort, by, desc):
     seqs = SeqIO.parse(filename, format  = 'fasta')
     sep = parse_sep(delim)
     print_header(sep)
+    group = SummaryGroup(sort, sep, by, desc)
     for s in seqs:
-        calc_summary(s, sep)
+        group.add(s)
+    if sort:
+        group.arrange()
+        for s in group.sequences:
+            print(s)
+    group.summarise()
 
 if __name__ == '__main__':
     main()

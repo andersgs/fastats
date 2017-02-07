@@ -74,7 +74,6 @@ class SummaryGroup:
         for s in self.sequences:
             s.generate_chunks(n_chunks)
             s.chunk_percent(feature)
-            print(s.chunks[feature])
     def get_blocks(self):
         for s in self.sequences:
             s.print_blocks(feature = 'geecee')
@@ -96,8 +95,10 @@ def parse_sep(sep):
 @click.option('-s', '--sort', is_flag = True)
 @click.option('--by', default = 'geecee', show_default = True, type = click.Choice(['geecee', 'length', 'N', 'dash', 'A', 'T', 'C', 'G']), help = 'Sort by column.')
 @click.option('--desc', is_flag = True, help = 'Sort by descending order.')
+@click.option('--feature', default = 'dash', type = click.Choice(['geecee', 'length', 'N', 'dash', 'A', 'T', 'C', 'G']), help = 'calculate chunk percent' )
+@click.option('-c', '--chunks', default = 100, help = "Number of roughly equally sized non-overlapping chunks to calculate percent of features")
 @click.argument('filename')
-def main(filename, delim, sort, by, desc):
+def main(filename, delim, sort, by, desc, feature, chunks):
     '''
     \b
     This script will take FILENAME (FASTA formatted file), and produce summary stats for each sequence in the file.
@@ -108,13 +109,14 @@ def main(filename, delim, sort, by, desc):
     group = SummaryGroup(sort, sep, by, desc)
     for s in seqs:
         group.add(s)
+        group.summarise()
+        group.chunk_stats(n_chunks = chunks, feature = feature)
     if sort:
         group.arrange()
         for s in group.sequences:
             print(s)
     group.summarise()
-    group.chunk_stats()
-    group.get_blocks(by)
+    group.get_blocks(feature)
 
 if __name__ == '__main__':
     main()

@@ -26,7 +26,7 @@ class SeqSummary:
         return out
     def summarise(self):
         self.__dict__['id'] = self.s.id
-        self.__dict__['length'] = len(self.s.id)
+        self.__dict__['length'] = len(self.s)
         self.__dict__['geecee'] = SeqUtils.GC(self.s.seq)
         self.__dict__['counts'] = {}
         for b in self.bases:
@@ -37,7 +37,7 @@ class SummaryGroup:
         self.by = by
         self.desc = desc
         self.__dict__ = {}
-        
+
 
 def print_header(sep = '|'):
     header = sep.join(['ID','LENGTH', 'GEECEE', 'A', 'T', 'C', 'G', 'N', '-' ])

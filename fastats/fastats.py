@@ -82,7 +82,8 @@ def parse_sep(sep):
 @click.argument('filename')
 def main(filename, delim, sort, by, desc):
     '''
-
+    \b
+    This script will take FILENAME (FASTA formatted file), and produce summary stats for each sequence in the file.
     '''
     seqs = SeqIO.parse(filename, format  = 'fasta')
     sep = parse_sep(delim)

@@ -75,7 +75,7 @@ def parse_sep(sep):
     return sep
 
 @click.command()
-@click.option('-d', '--delim', default='|', show_default = True, metavar = '<char>', help = 'Set separator character.')
+@click.option('-d', '--delim', default=',', show_default = True, metavar = '<char>', help = 'Set separator character.')
 @click.option('-s', '--sort', is_flag = True)
 @click.option('--by', default = 'geecee', show_default = True, type = click.Choice(['geecee', 'length', 'N', 'dash', 'A', 'T', 'C', 'G']), help = 'Sort by column.')
 @click.option('--desc', is_flag = True, help = 'Sort by descending order.')

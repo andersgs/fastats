@@ -8,15 +8,15 @@ sequence in file.
 # How to install it
 The easiest way of installing `fastats` is using `pip`:
 
-`pip install git+https://github.com/andersgs/fastats.git`
+`pip3 install git+https://github.com/andersgs/fastats.git`
 
 Use the `--user` option to install locally:
 
-`pip install --user git+https://github.com/andersgs/fastats.git`
+`pip3 install --user git+https://github.com/andersgs/fastats.git`
 
 Use the `--install-option` to install the script in a particular location:
 
-`pip install --install-option="--install-scripts=$HOME/bin" --user git+https://github.com/andersgs/fastats.git`
+`pip3 install --install-option="--install-scripts=$HOME/bin" --user git+https://github.com/andersgs/fastats.git`
 
 Once installed type the following:
 
@@ -31,7 +31,7 @@ Once installed type the following:
 * `-s/--sort`: sort the output by a particular column
 * `--by`: specify column to sort on (default: `geecee`)
 * `--desc`: sort by descending mode
-* `-d/--delim`: change column delimter (default: `|`)
+* `-d/--delim`: change column delimter (default: `,`)
 
 # Output
 

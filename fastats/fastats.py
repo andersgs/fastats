@@ -74,9 +74,9 @@ class SummaryGroup:
         for s in self.sequences:
             s.generate_chunks(n_chunks)
             s.chunk_percent(feature)
-    def get_blocks(self):
+    def get_blocks(self, feature):
         for s in self.sequences:
-            s.print_blocks(feature = 'geecee')
+            s.print_blocks(feature = feature)
 
 def print_header(sep = '|'):
     header = sep.join(['ID','LENGTH', 'GEECEE', 'A', 'T', 'C', 'G', 'N', '-' ])
@@ -96,7 +96,7 @@ def parse_sep(sep):
 @click.option('--by', default = 'geecee', show_default = True, type = click.Choice(['geecee', 'length', 'N', 'dash', 'A', 'T', 'C', 'G']), help = 'Sort by column.')
 @click.option('--desc', is_flag = True, help = 'Sort by descending order.')
 @click.option('--feature', default = 'dash', type = click.Choice(['geecee', 'length', 'N', 'dash', 'A', 'T', 'C', 'G']), help = 'calculate chunk percent' )
-@click.option('-c', '--chunks', default = 100, help = "Number of roughly equally sized non-overlapping chunks to calculate percent of features")
+@click.option('-c', '--chunks', default = 10, help = "Number of roughly equally sized non-overlapping chunks to calculate percent of features")
 @click.argument('filename')
 def main(filename, delim, sort, by, desc, feature, chunks):
     '''

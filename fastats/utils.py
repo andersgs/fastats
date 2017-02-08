@@ -36,6 +36,7 @@ def chunk_percent(seq_chunk, feature = 'dash'):
     '''
     Calculate the proportion of each chunk that is of a certain feature (e.g., A, T, C, G, or GC)
     '''
+    print(seq_chunk)
     if feature == 'dash':
         stats = [chunk['-']/sum(chunk.values()) for chunk in seq_chunk]
     elif feature == 'geecee':
@@ -51,9 +52,9 @@ def percent_to_blocks(stats, thresholds = [0.5, 0.9, 0.95]):
     out = ''
     for s in stats:
         if s < thresholds[0]:
-            out += bcolors.FAIL + block + bcolors.ENDC
-        elif s >= thresholds[0] and s < thresholds[1]:
             out += bcolors.WARNING + block + bcolors.ENDC
+        elif s >= thresholds[0] and s < thresholds[1]:
+            out += bcolors.OKGREEN + block + bcolors.ENDC
         else:
             out += bcolors.OKBLUE + block + bcolors.ENDC
     return out

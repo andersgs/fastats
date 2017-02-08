@@ -41,7 +41,7 @@ class SeqSummary:
         self.chunks[feature] = utils.chunk_percent(self.chunks['counts'], feature)
     def print_blocks(self, feature):
         blocks = utils.percent_to_blocks(self.chunks[feature], thresholds = [0.5, 0.9, 0.95])
-        print(self.id + ' ' + blocks)
+        print('{:<20} {}'.format(self.id, blocks))
 
 class SummaryGroup:
     def __init__(self, sort, sep, by = 'geecee', desc = False):

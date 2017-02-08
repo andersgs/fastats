@@ -109,13 +109,12 @@ def main(filename, delim, sort, by, desc, feature, chunks):
     group = SummaryGroup(sort, sep, by, desc)
     for s in seqs:
         group.add(s)
-        group.summarise()
-        group.chunk_stats(n_chunks = chunks, feature = feature)
     if sort:
         group.arrange()
         for s in group.sequences:
             print(s)
     group.summarise()
+    group.chunk_stats(n_chunks = chunks, feature = feature)
     group.get_blocks(feature)
 
 if __name__ == '__main__':

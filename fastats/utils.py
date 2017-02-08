@@ -36,7 +36,6 @@ def chunk_percent(seq_chunk, feature = 'dash'):
     '''
     Calculate the proportion of each chunk that is of a certain feature (e.g., A, T, C, G, or GC)
     '''
-    print(seq_chunk)
     if feature == 'dash':
         stats = [chunk['-']/sum(chunk.values()) for chunk in seq_chunk]
     elif feature == 'geecee':
